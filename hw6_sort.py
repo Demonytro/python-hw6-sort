@@ -16,46 +16,52 @@ name_folders = {
     'unknown': None
 }
 
-def normalize(name_files):
-    return all
+def normalize(path_file):
+    # name_files = path_file.name
+    # norma_nametranslite
+    # return norma_name
 
 
-def replace_files(files):
-
-
-def sort_all(path_folder):
-
-    if path_folder in name_folders:
-
+def sort_folder(path_folder):
 
     list_path_subfolder = path_folder.iterdir()
-    if list_path_subfolder == None:
+    if not list_path_subfolder:
+        os.rmdir(path_folder)
         return
-    for file_folder in list_path_subfolder:
-        if file_folder.is_dir():
-            # subfolder = file_folder.iterdir()
-            sort_all(file_folder.iterdir())
-            remove dir(file_folder)
+    else:
+        for file_folder in list_path_subfolder:
+            if file_folder.is_dir():
+                sort_folder(file_folder)
+                os.rmdir(path_folder)
+            else:
+                sort_files(file_folder)
 
-        elif file_folder.suffix in name_folders['images']:
-            normalize(file_folder)
-            replace()
 
-        elif files_folder.suffix in name_folders['video']:
-            pass
-        elif files_folder.suffix in name_folders['documents']:
+def sort_files(path_file):
+    
 
-        elif files_folder.suffix in name_folders['audio']:
+    if path_file.suffix in name_folders['images']:
+        replace()
+        normalize(path_file)
 
-        elif files_folder.suffix in name_folders['archives']:
-            разархив
-            удалить
+    if path_file.suffix in name_folders['video']:
+        replace()
 
-        elif files_folder.suffix in name_folders['audio']:
+    if path_file.suffix in name_folders['documents']:
+
+    if path_file.suffix in name_folders['audio']:
+
+    if path_file.suffix in name_folders['archives']:
+        разархив
+        удалить
+
+    if path_file.suffix in name_folders['audio']:
 
         
-        else:
-            other
+        # else:
+        #     other
+    
+    replace(other)
 
 
 
@@ -65,28 +71,31 @@ def sort_all(path_folder):
 # path_folders = [] 
 # and raise
 
-path_folders = sys.argv[-1]
+path_start_folder = sys.argv[-1]
 # print(path_folders)
 # D:\GitHub\python-hw6-sort\desktop
 
 for new_folder in name_folders:
-    if new_folder.exists():
+    path_new_dir = os.path.join(path_start_folder, new_folder)
+    try:
+        os.mkdir(path_new_dir)
+        print('Create new dir ' + path_new_dir)
+    except OSError as error:
+        print(error)
         raise
-    else:
-        mkdir(new_folder path_folders)
 
 # all_files = os.listdir(path_folders)
 list_path_first = path_folders.iterdir()
 
-for all in list_path_first:
-    normalize(all)
-    if all in name_folders:
+for first_all in list_path_first:
+    if first_all in name_folders:
         continue
-    if all.is_dir():
-        sort_folder
-    sort_all(all)
+    if first_all.is_dir():
+        sort_folder(first_all)
+    else:
+        sort_files(first_all)
 
-list_sort_done = path_folders.iterdir()
+list_sort_done = path_start_folder.iterdir()
 print('Sort done' + list_sort_done)
 
 
