@@ -19,7 +19,7 @@ name_folders = {
 def normalize(path_file):
     # name_files = path_file.name
     # norma_nametranslite
-    # return norma_name
+    # rename old_name norma_name
 
 
 def sort_folder(path_folder):
@@ -39,29 +39,36 @@ def sort_folder(path_folder):
 
 def sort_files(path_file):
     
-
     if path_file.suffix in name_folders['images']:
-        replace()
-        normalize(path_file)
+        # Path("path/to/current/file.foo").rename("path/to/new/destination/for/file.foo")   
+        new_path_name = os.path.join(path_start_folder, 'images', path_file.name)
+        
+    elif path_file.suffix in name_folders['video']:
+        new_path_name = os.path.join(path_start_folder, 'video', path_file.name)
 
-    if path_file.suffix in name_folders['video']:
-        replace()
+    elif path_file.suffix in name_folders['documents']:
+        new_path_name = os.path.join(path_start_folder, 'documents', path_file.name)
 
-    if path_file.suffix in name_folders['documents']:
+    elif path_file.suffix in name_folders['audio']:
+        new_path_name = os.path.join(path_start_folder, 'audio', path_file.name)
 
-    if path_file.suffix in name_folders['audio']:
+    elif path_file.suffix in name_folders['audio']:
+        new_path_name = os.path.join(path_start_folder, 'audio', path_file.name)
 
-    if path_file.suffix in name_folders['archives']:
-        разархив
-        удалить
-
-    if path_file.suffix in name_folders['audio']:
-
+    elif path_file.suffix in name_folders['archives']:
+        # разархив
+        # удалить or delete
         
         # else:
         #     other
+    else:
+        # replace(other)
+        new_path_name = os.path.join(path_start_folder, 'unknown', path_file.name)
+
+    Path(path_file).rename(new_path_name)
+    normalize(new_path_name)
     
-    replace(other)
+    # return
 
 
 
