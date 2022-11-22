@@ -17,26 +17,39 @@ name_folders = {
 }
 
 def normalize(name_files):
+    return all
 
 
 def replace_files(files):
 
 
-def sort_files(folder):
-    for files_folder in folder:
-        if files.is_dir():
-            sort_files(files_folder)
-            remove dir(files_folder)
+def sort_all(path_folder):
 
-        elif files_folder.suffix in name_folders['images']:
+    if path_folder in name_folders:
+
+
+    list_path_subfolder = path_folder.iterdir()
+    if list_path_subfolder == None:
+        return
+    for file_folder in list_path_subfolder:
+        if file_folder.is_dir():
+            # subfolder = file_folder.iterdir()
+            sort_all(file_folder.iterdir())
+            remove dir(file_folder)
+
+        elif file_folder.suffix in name_folders['images']:
+            normalize(file_folder)
+            replace()
 
         elif files_folder.suffix in name_folders['video']:
-
+            pass
         elif files_folder.suffix in name_folders['documents']:
 
         elif files_folder.suffix in name_folders['audio']:
 
         elif files_folder.suffix in name_folders['archives']:
+            разархив
+            удалить
 
         elif files_folder.suffix in name_folders['audio']:
 
@@ -56,12 +69,26 @@ path_folders = sys.argv[-1]
 # print(path_folders)
 # D:\GitHub\python-hw6-sort\desktop
 
+for new_folder in name_folders:
+    if new_folder.exists():
+        raise
+    else:
+        mkdir(new_folder path_folders)
+
 # all_files = os.listdir(path_folders)
-list_path_folders = path_folders.iterdir()
+list_path_first = path_folders.iterdir()
 
-sort_files(list_path_folders)
+for all in list_path_first:
+    normalize(all)
+    if all in name_folders:
+        continue
+    if all.is_dir():
+        sort_folder
+    sort_all(all)
 
-mkdir
+list_sort_done = path_folders.iterdir()
+print('Sort done' + list_sort_done)
+
 
 
 
@@ -71,16 +98,6 @@ mkdir
 # 3. создание папок
 # 3. рекурсия - поиск вложенных папок - сорт - удаление
 # 4. Сортировка + переименование
-
-p.suffix
-
-for count in list_path_folders:
-    if path_count.is_dir():
-        count_files(path_count)
-    else:
-        for file in path_count:
-
-    count_files(count)
 
 # вы должны вынести логику обработки папки в отдельную функцию
 # Чтобы скрипт мог пройти на любую глубину вложенности, функция обработки папок должна рекурсивно вызывать сама себя, когда ей встречаются вложенные папки
@@ -92,12 +109,6 @@ for count in list_path_folders:
 #    музыка ('MP3', 'OGG', 'WAV', 'AMR');
 #    архивы ('ZIP', 'GZ', 'TAR');
 #    неизвестные расширения.
-
-p.exists()
-
-def count_files(path_count):
-
-    
 
 
 # архивы распаковываются и их содержимое переносится в папку archives
