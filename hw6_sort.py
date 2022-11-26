@@ -118,18 +118,15 @@ def normalize(string):
 def sort_folder(path_folder):
 
     list_path_subfolder = list(path_folder.iterdir())
-    
     if not list_path_subfolder:
-        print(path_folder)
-        input('delete [] list_path_subfolder')
-        return print('next folder')
+        return 
     else:
         for file_folder in list_path_subfolder:
             if file_folder.is_dir():
                 sort_folder(file_folder)
             else:
                 sort_files(file_folder)
-    return print('next')
+    return
 
 
 def sort_files(path_file):
@@ -152,7 +149,6 @@ def sort_files(path_file):
 
     elif ext in name_folders['archives']:
         new_path = Path(os.path.join(path_start_folder, 'archives'))
-        print(new_path, type(new_path))
         with ZipFile(path_file, 'r') as zObject:
             zObject.extractall(new_path)
         # shutil.unpack_archive(path_file, extract_dir)
@@ -165,26 +161,21 @@ def sort_files(path_file):
     norma_name = normalize(name)
 
     new_name = f'{norma_name}{ext}'
-    print("new name", new_name)
     new_path_name = os.path.join(new_path, new_name)
 
     try:
         path_file.rename(new_path_name)
     except:
         new_name = f'{norma_name}_{count_dub}{ext}'
-        print("DUB new name", new_name)
         new_path_name = Path(os.path.join(new_path, new_name))
         path_file.rename(new_path_name)
 
 
-
-
+# ---------------------------------------------------------------------------
 
 path_start_folder = Path(sys.argv[-1])
 
 list_path_first = list(path_start_folder.iterdir())
-
-print(list_path_first)
 
 for new_folder in name_folders:
     path_new_dir = os.path.join(path_start_folder, new_folder)
@@ -195,14 +186,14 @@ for new_folder in name_folders:
 
 for any_path in list_path_first:
     
-    if any_path.name in name_folders:
-        continue
-    elif any_path.is_dir():
+    if any_path.is_dir():
         sort_folder(any_path)
-        shutil.rmtree(any_path)
+        if any_path.name in name_folders:
+            continue
+        else:
+            shutil.rmtree(any_path)
     else:
         sort_files(any_path)
 
 list_sort_done = list(path_start_folder.iterdir())
-print('Sort done', list_sort_done)
-
+print('Sort done!\n', list_sort_done)
