@@ -5,6 +5,10 @@
 import os
 from pathlib import Path
 import sys
+import shutil
+import string
+import re
+from zipfile import ZipFile
 
 
 name_folders = {
@@ -16,124 +20,189 @@ name_folders = {
     'unknown': None
 }
 
-def normalize(path_file):
-    # name_files = path_file.name
-    # norma_nametranslite
-    # rename old_name norma_name
+count_dub = 0
+
+def normalize(string):
+    """ This function works just fine """
+    capital_letters = {
+        u'А': u'A',
+        u'Б': u'B',
+        u'В': u'V',
+        u'Г': u'G',
+        u'Д': u'D',
+        u'Е': u'E',
+        u'Ё': u'E',
+        u'Ж': u'Zh',
+        u'З': u'Z',
+        u'И': u'I',
+        u'Й': u'Y',
+        u'К': u'K',
+        u'Л': u'L',
+        u'М': u'M',
+        u'Н': u'N',
+        u'О': u'O',
+        u'П': u'P',
+        u'Р': u'R',
+        u'С': u'S',
+        u'Т': u'T',
+        u'У': u'U',
+        u'Ф': u'F',
+        u'Х': u'H',
+        u'Ц': u'Ts',
+        u'Ч': u'Ch',
+        u'Ш': u'Sh',
+        u'Щ': u'Sch',
+        u'Ъ': u'-',
+        u'Ы': u'Y',
+        u'Ь': u'-',
+        u'Э': u'E',
+        u'Ю': u'Yu',
+        u'Я': u'Ya'
+    }
+
+    lower_case_letters = {
+        u'а': u'a',
+        u'б': u'b',
+        u'в': u'v',
+        u'г': u'g',
+        u'д': u'd',
+        u'е': u'e',
+        u'ё': u'e',
+        u'ж': u'zh',
+        u'з': u'z',
+        u'и': u'i',
+        u'й': u'y',
+        u'к': u'k',
+        u'л': u'l',
+        u'м': u'm',
+        u'н': u'n',
+        u'о': u'o',
+        u'п': u'p',
+        u'р': u'r',
+        u'с': u's',
+        u'т': u't',
+        u'у': u'u',
+        u'ф': u'f',
+        u'х': u'h',
+        u'ц': u'ts',
+        u'ч': u'ch',
+        u'ш': u'sh',
+        u'щ': u'sch',
+        u'ъ': u'-',
+        u'ы': u'y',
+        u'ь': u'-',
+        u'э': u'e',
+        u'ю': u'yu',
+        u'я': u'ya'
+    }
+
+    translit_string = ""
+
+    for index, char in enumerate(string):
+        if char in lower_case_letters.keys():
+            char = lower_case_letters[char]
+        elif char in capital_letters.keys():
+            char = capital_letters[char]
+            if len(string) > index+1:
+                if string[index+1] not in lower_case_letters.keys():
+                    char = char.upper()
+            else:
+                char = char.upper()
+        if not re.search('[a-z A-Z0-9]', char):
+            char = '-'
+        translit_string += char
+
+    return translit_string
 
 
 def sort_folder(path_folder):
 
-    list_path_subfolder = path_folder.iterdir()
+    list_path_subfolder = list(path_folder.iterdir())
+    
     if not list_path_subfolder:
-        os.rmdir(path_folder)
-        return
+        print(path_folder)
+        input('delete [] list_path_subfolder')
+        return print('next folder')
     else:
         for file_folder in list_path_subfolder:
             if file_folder.is_dir():
                 sort_folder(file_folder)
-                os.rmdir(path_folder)
             else:
                 sort_files(file_folder)
+    return print('next')
 
 
 def sort_files(path_file):
-    
-    if path_file.suffix in name_folders['images']:
-        # Path("path/to/current/file.foo").rename("path/to/new/destination/for/file.foo")   
-        new_path_name = os.path.join(path_start_folder, 'images', path_file.name)
+
+    name, ext = path_file.stem, path_file.suffix
+    global count_dub
+    count_dub += 1
+
+    if ext in name_folders['images']:
+        new_path = os.path.join(path_start_folder, 'images')
         
-    elif path_file.suffix in name_folders['video']:
-        new_path_name = os.path.join(path_start_folder, 'video', path_file.name)
+    elif ext in name_folders['video']:
+        new_path = os.path.join(path_start_folder, 'video')
 
-    elif path_file.suffix in name_folders['documents']:
-        new_path_name = os.path.join(path_start_folder, 'documents', path_file.name)
+    elif ext in name_folders['documents']:
+        new_path = os.path.join(path_start_folder, 'documents')
 
-    elif path_file.suffix in name_folders['audio']:
-        new_path_name = os.path.join(path_start_folder, 'audio', path_file.name)
+    elif ext in name_folders['audio']:
+        new_path = os.path.join(path_start_folder, 'audio')
 
-    elif path_file.suffix in name_folders['audio']:
-        new_path_name = os.path.join(path_start_folder, 'audio', path_file.name)
+    elif ext in name_folders['archives']:
+        new_path = Path(os.path.join(path_start_folder, 'archives'))
+        print(new_path, type(new_path))
+        with ZipFile(path_file, 'r') as zObject:
+            zObject.extractall(new_path)
+        # shutil.unpack_archive(path_file, extract_dir)
+        # new_path = os.path.join(path_start_folder, 'archives')
+        # os.remove (path_file)
 
-    elif path_file.suffix in name_folders['archives']:
-        # разархив
-        # удалить or delete
-        
-        # else:
-        #     other
     else:
-        # replace(other)
-        new_path_name = os.path.join(path_start_folder, 'unknown', path_file.name)
+        new_path = os.path.join(path_start_folder, 'unknown')
 
-    Path(path_file).rename(new_path_name)
-    normalize(new_path_name)
-    
-    # return
+    norma_name = normalize(name)
+
+    new_name = f'{norma_name}{ext}'
+    print("new name", new_name)
+    new_path_name = os.path.join(new_path, new_name)
+
+    try:
+        path_file.rename(new_path_name)
+    except:
+        new_name = f'{norma_name}_{count_dub}{ext}'
+        print("DUB new name", new_name)
+        new_path_name = Path(os.path.join(new_path, new_name))
+        path_file.rename(new_path_name)
 
 
 
 
 
-# Скрипт принимает один аргумент при запуске — это имя папки
-# path_folders = [] 
-# and raise
+path_start_folder = Path(sys.argv[-1])
 
-path_start_folder = sys.argv[-1]
-# print(path_folders)
-# D:\GitHub\python-hw6-sort\desktop
+list_path_first = list(path_start_folder.iterdir())
+
+print(list_path_first)
 
 for new_folder in name_folders:
     path_new_dir = os.path.join(path_start_folder, new_folder)
-    try:
-        os.mkdir(path_new_dir)
-        print('Create new dir ' + path_new_dir)
-    except OSError as error:
-        print(error)
-        raise
-
-# all_files = os.listdir(path_folders)
-list_path_first = path_folders.iterdir()
-
-for first_all in list_path_first:
-    if first_all in name_folders:
-        continue
-    if first_all.is_dir():
-        sort_folder(first_all)
+    if not os.path.exists(path_new_dir):
+        os.makedirs(path_new_dir)
     else:
-        sort_files(first_all)
+        print('don\'t make up folder', path_new_dir)
 
-list_sort_done = path_start_folder.iterdir()
-print('Sort done' + list_sort_done)
+for any_path in list_path_first:
+    
+    if any_path.name in name_folders:
+        continue
+    elif any_path.is_dir():
+        sort_folder(any_path)
+        shutil.rmtree(any_path)
+    else:
+        sort_files(any_path)
 
+list_sort_done = list(path_start_folder.iterdir())
+print('Sort done', list_sort_done)
 
-
-
-# 1. Поиск архивов
-# 2. Разархив
-# 3. создание списка "слепка"
-# 3. создание папок
-# 3. рекурсия - поиск вложенных папок - сорт - удаление
-# 4. Сортировка + переименование
-
-# вы должны вынести логику обработки папки в отдельную функцию
-# Чтобы скрипт мог пройти на любую глубину вложенности, функция обработки папок должна рекурсивно вызывать сама себя, когда ей встречаются вложенные папки
-# Скрипт должен проходить по указанной во время вызова папке и сортировать все файлы по группам:
-
-#    изображения ('JPEG', 'PNG', 'JPG', 'SVG');
-#    видео файлы ('AVI', 'MP4', 'MOV', 'MKV');
-#    документы ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX');
-#    музыка ('MP3', 'OGG', 'WAV', 'AMR');
-#    архивы ('ZIP', 'GZ', 'TAR');
-#    неизвестные расширения.
-
-
-# архивы распаковываются и их содержимое переносится в папку archives
-
-# Критерии приёма задания
-
-#     все файлы и папки переименовываются при помощи функции normalize.
-#     расширения файлов не изменяются после переименования.
-#     пустые папки удаляются
-#     скрипт игнорирует папки archives, video, audio, documents, images;
-#     распакованное содержимое архива переносится в папку archives в подпапку, названную точно так же, как и архив, но без расширения в конце;
-#     файлы, расширения которых неизвестны, остаются без изменений.
